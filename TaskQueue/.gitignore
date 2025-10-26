@@ -1,0 +1,6 @@
+.cache
+build
+compile_commands.json
+test/build
+test/test.dSYM
+test/test
