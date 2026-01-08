@@ -24,6 +24,14 @@ public:
 
     virtual void operator()() override
     {
+        //此处只能确保任务还没有执行时，选择了取消，然后不执行任务
+        //所以 如果要 完全确保 在执行中 取消了， 外层调用时， lambda捕获 需要延长 捕获对象生命周期 直到执行完成
+        if(mCancaled.load()) {
+            mRealTask = nullptr;
+            mBarrier.notify();
+            return;
+        }
+
         recordRunStart();
         if (mRealTask)
         {
@@ -33,14 +41,23 @@ public:
         recordRunEnd();
     }
 
-    void wait(std::chrono::milliseconds timeout = std::chrono::milliseconds(-1))
+    //false 表示超时
+    bool wait(std::chrono::milliseconds timeout = std::chrono::milliseconds(-1))
     {
-        mBarrier.wait(timeout);
+        return mBarrier.wait(timeout);
     }
+
+    //取消执行
+    void cancel() override
+    {
+        mCancaled.store(true);
+    }
+
 
 private:
     TaskOperatorPtr mRealTask;
     LWBarrier       mBarrier;
+    std::atomic<bool> mCancaled;
 };
 
 // 延时任务 - 优化版本，不再阻塞线程

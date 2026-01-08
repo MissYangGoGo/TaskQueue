@@ -106,7 +106,12 @@ void SerialQueueImpl::sync(const TaskOperatorPtr& task, std::chrono::millisecond
             _threadPool()->execute(mSerialTask);
         }
     }
-    syncTask->wait(timeout);
+    
+    if(!syncTask->wait(timeout)) {
+        //超时 取消任务
+        syncTask->cancel();
+    }
+
 }
 
 void SerialQueueImpl::after(std::chrono::milliseconds delay, const TaskOperatorPtr& task)

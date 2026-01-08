@@ -33,7 +33,11 @@ void ConcurrencyQueueImpl::sync(const TaskOperatorPtr& task, std::chrono::millis
 
     auto syncTask = std::make_shared<TaskBarrierOperator>(task);
     _threadPool()->execute(syncTask, mPriority);
-    syncTask->wait(timeout);
+    
+    // 超时取消任务
+    if(!syncTask->wait(timeout)){
+        syncTask->cancel();
+    }
 }
 
 void ConcurrencyQueueImpl::after(std::chrono::milliseconds delay, const TaskOperatorPtr& task)

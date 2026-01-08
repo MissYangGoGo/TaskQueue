@@ -1,11 +1,6 @@
 #include "TaskQueueReporter.h"
-// #include "common/report/HEReporterManager.hpp"
-#ifdef __APPLE__
-// #include "common/ThreadBacktraceHelper.h"
-#endif
-
-#include <unordered_map>
 #include <string>
+#include "common/LogHelper.h"
 namespace task
 {
 
@@ -41,22 +36,22 @@ void TaskQueueReporter::notifyReportLimit(int32_t limit, int32_t& val, TaskQueue
 void TaskQueueReporter::_reportThreadCountChanged(std::string&& msg)
 {
     // 线程数量变化
-    std::unordered_map<std::string, std::string> extra{ { "threadCnt", std::move(msg) } };
-    // comm::HEReporterManager::GetInstance().reportClient(comm::ReportKey::kThreadPool_Info, extra);
+    // TODO
+    LOGI("Thread count changed: %s", msg.c_str());
 }
 
 void TaskQueueReporter::_reportTaskDurationExceedThreshold(std::string&& msg)
 {
     //上报任务超时
-    std::unordered_map<std::string, std::string> extra{ { "taskBlock", std::move(msg) } };
-    // comm::HEReporterManager::GetInstance().reportClient(comm::ReportKey::kThreadPool_Info, extra);
+    // TODO
+    LOGI("Task duration exceed threshold: %s", msg.c_str());
 }
 
 void TaskQueueReporter::_reportTaskCountExceedThreshold(std::string&& msg)
 {
     // 任务数量超限
-    std::unordered_map<std::string, std::string> extra{ { "taskExceed", std::move(msg) } };
-    // comm::HEReporterManager::GetInstance().reportClient(comm::ReportKey::kThreadPool_Info, extra);
+    // TODO
+    LOGI("Task count exceed threshold: %s", msg.c_str());
 }
 
 }  // namespace task
